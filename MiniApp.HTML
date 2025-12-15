@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>IMMORTAL VPN</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --bg-color: #050a14; --card-bg: rgba(20, 30, 50, 0.8); --neon-blue: #00f3ff; --neon-glow: 0 0 15px rgba(0, 243, 255, 0.6); --text-color: #ffffff; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Tahoma', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+        header { text-align: center; padding: 25px 0; background: linear-gradient(180deg, rgba(0,243,255,0.1) 0%, rgba(5,10,20,0) 100%); }
+        .logo-text { font-size: 26px; font-weight: 900; color: var(--neon-blue); text-shadow: var(--neon-glow); letter-spacing: 2px; margin-bottom: 10px; }
+        .user-balance { font-size: 15px; color: #fff; background: rgba(255, 255, 255, 0.1); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--neon-blue); display: inline-block; box-shadow: var(--neon-glow); }
+        .container { padding: 20px; }
+        .card { background: var(--card-bg); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 20px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); position: relative; overflow: hidden; transition: transform 0.2s; }
+        .card:active { transform: scale(0.98); }
+        .card h3 { margin: 0 0 10px 0; color: var(--neon-blue); }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-primary { background: var(--neon-blue); color: #000; box-shadow: var(--neon-glow); }
+        .btn-outline { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); }
+        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 10px; color: white; text-align: center; font-size: 18px; margin-bottom: 10px; box-sizing: border-box; }
+        input:focus { border-color: var(--neon-blue); outline: none; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-text">IMMORTAL VPN</div>
+        <div class="user-balance" id="balanceDisplay">در حال بارگیری...</div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h3><i class="fas fa-shopping-cart"></i> خرید سریع</h3>
+            <p style="font-size: 13px; color: #ccc;">با کلیک روی دکمه زیر، لیست پلن‌ها در ربات برای شما ارسال می‌شود.</p>
+            <button class="btn btn-primary" onclick="sendAction('open_buy_menu')">مشاهده پلن‌ها</button>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-star" style="color: yellow;"></i> شارژ با استارز</h3>
+            <p style="font-size: 12px; color: #ccc;">تعداد استارز را وارد کنید (آنی و امن):</p>
+            <input type="number" id="starsInput" placeholder="مثلاً 50">
+            <button class="btn btn-outline" onclick="buyStars()">پرداخت</button>
+        </div>
+        
+        <div class="card">
+             <h3><i class="fas fa-user-shield"></i> سرویس‌های من</h3>
+             <button class="btn btn-outline" onclick="sendAction('open_services')">مدیریت سرویس‌ها</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.setHeaderColor('#050a14');
+        tg.setBackgroundColor('#050a14');
+
+        // دریافت اطلاعات از URL (این بخش کلید هماهنگی با ربات است)
+        const urlParams = new URLSearchParams(window.location.search);
+        const userBalance = urlParams.get('bal') || '0';
+        const userRegion = urlParams.get('reg') || 'fa';
+        const currency = userRegion === 'fa' ? 'تومان' : '$';
+
+        // نمایش موجودی هماهنگ شده
+        document.getElementById('balanceDisplay').innerText = `💰 موجودی: ${parseInt(userBalance).toLocaleString()} ${currency}`;
+
+        function sendAction(action, payload = null) {
+            const data = JSON.stringify({ action: action, payload: payload });
+            tg.sendData(data);
+        }
+
+        function buyStars() {
+            const amount = document.getElementById('starsInput').value;
+            if (amount && amount > 0) {
+                sendAction('topup_stars', amount);
+            } else {
+                tg.showPopup({ title: 'خطا', message: 'لطفاً یک عدد معتبر وارد کنید.' });
+            }
+        }
+    </script>
+</body>
+</html>
