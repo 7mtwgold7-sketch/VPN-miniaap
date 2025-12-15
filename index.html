@@ -2,272 +2,270 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>IMMORTAL VPN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #000000;
-            --card-bg: #111111;
-            --neon-blue: #00f3ff;
-            --neon-glow: 0 0 10px rgba(0, 243, 255, 0.7), 0 0 20px rgba(0, 243, 255, 0.5);
+            --bg-color: #050505;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --neon-cyan: #00f3ff;
+            --neon-blue: #0066ff;
             --text-color: #ffffff;
-            --gray-text: #888888;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Tahoma', sans-serif;
             margin: 0;
-            padding: 0;
-            padding-bottom: 80px;
+            padding: 15px;
+            padding-bottom: 90px;
             overflow-x: hidden;
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* پس زمینه متحرک */
-        body::before {
-            content: "";
+        /* پس‌زمینه متحرک */
+        .bg-animation {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 10%, rgba(0, 243, 255, 0.15), transparent 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.1), transparent 70%);
             z-index: -1;
-            animation: bgPulse 4s infinite alternate;
+            animation: pulseBg 4s infinite alternate;
         }
 
-        @keyframes bgPulse {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; }
+        @keyframes pulseBg {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
         }
 
+        /* هدر و لوگو */
         .header {
             text-align: center;
-            padding-top: 40px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            margin-top: 10px;
         }
 
-        .logo-container {
-            width: 110px;
-            height: 110px;
-            margin: 0 auto;
+        .logo-wrapper {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 10px;
             border-radius: 50%;
             padding: 3px;
-            background: var(--neon-blue);
-            box-shadow: var(--neon-glow);
-            position: relative;
+            background: conic-gradient(from 0deg, var(--neon-cyan), var(--neon-blue), var(--neon-cyan));
+            animation: spinBorder 4s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
         }
 
         .logo-img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            object-fit: cover;
             background: #000;
-            border: 2px solid #000;
+            object-fit: contain;
+            /* لوگوی ربات شما */
+            content: url('https://cdn-icons-png.flaticon.com/512/4128/4128266.png'); 
         }
 
+        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
+
         .app-title {
-            margin-top: 15px;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 900;
-            color: var(--neon-blue);
-            text-shadow: 0 0 15px var(--neon-blue);
-            letter-spacing: 1px;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* کارت موجودی */
         .balance-card {
-            background: rgba(20, 20, 20, 0.8);
-            margin: 20px;
-            padding: 25px;
-            border-radius: 25px;
-            text-align: center;
+            width: 100%;
+            max-width: 350px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
             border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
             backdrop-filter: blur(10px);
+            margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .balance-title {
-            font-size: 14px;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
+        .balance-label { font-size: 12px; color: #aaa; margin-bottom: 5px; }
+        .balance-value { font-size: 32px; font-weight: bold; color: #fff; margin-bottom: 15px; }
 
-        .balance-amount {
-            font-size: 36px;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-
-        .add-balance-btn {
-            background: var(--neon-blue);
+        .btn-topup {
+            background: var(--neon-cyan);
             color: #000;
             border: none;
-            padding: 14px 40px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
-            transition: 0.2s;
+            padding: 10px 0;
             width: 100%;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+            transition: 0.2s;
         }
+        .btn-topup:active { transform: scale(0.97); }
 
-        .add-balance-btn:active {
-            transform: scale(0.96);
-            box-shadow: 0 0 5px rgba(0, 243, 255, 0.4);
-        }
-
-        /* دکمه‌های وسط */
-        .actions-grid {
+        /* گرید دکمه‌ها */
+        .grid-menu {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 0 20px;
+            gap: 12px;
+            width: 100%;
+            max-width: 350px;
         }
 
-        .action-card {
-            background: rgba(30, 30, 30, 0.6);
-            border-radius: 18px;
-            padding: 20px;
+        .menu-item {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.05);
             transition: 0.2s;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 90px;
         }
 
-        .action-card:active {
+        .menu-item:active {
             background: rgba(0, 243, 255, 0.1);
-            border-color: var(--neon-blue);
+            border-color: var(--neon-cyan);
+            transform: scale(0.98);
         }
 
-        .action-icon {
-            font-size: 28px;
-            color: var(--neon-blue);
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 5px var(--neon-blue));
-        }
-
-        .action-text {
-            font-size: 14px;
-            color: #fff;
-        }
+        .menu-icon { font-size: 24px; color: var(--neon-cyan); margin-bottom: 8px; filter: drop-shadow(0 0 5px var(--neon-cyan)); }
+        .menu-text { font-size: 13px; color: #fff; }
 
         /* نوار پایین */
         .bottom-nav {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            height: 65px;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 350px;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 50px;
+            height: 60px;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-evenly;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             z-index: 100;
         }
 
-        .nav-item {
+        .nav-btn {
+            font-size: 20px;
             color: #666;
-            font-size: 22px;
             padding: 10px;
             transition: 0.3s;
             cursor: pointer;
         }
 
-        .nav-item.active {
+        .nav-btn.active {
             color: #000;
-            background: var(--neon-blue);
-            border-radius: 50%;
+            background: var(--neon-cyan);
             width: 45px;
             height: 45px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 20px var(--neon-blue);
-            transform: translateY(-15px);
+            box-shadow: 0 0 15px var(--neon-cyan);
+            transform: translateY(-5px);
         }
+
     </style>
 </head>
 <body>
 
+    <div class="bg-animation"></div>
+
     <div class="header">
-        <div class="logo-container">
-            <img src="logo.jpg" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3662/3662817.png'">
+        <div class="logo-wrapper">
+            <img class="logo-img">
         </div>
         <div class="app-title">IMMORTAL VPN</div>
     </div>
 
     <div class="balance-card">
-        <div class="balance-title">موجودی کیف پول شما</div>
-        <div class="balance-amount" id="balanceDisplay">...</div>
-        <button class="add-balance-btn" onclick="sendAction('topup_menu')">
-            <i class="fas fa-wallet"></i> افزایش موجودی
+        <div class="balance-label">موجودی کیف پول</div>
+        <div class="balance-value" id="balDisplay">...</div>
+        <button class="btn-topup" onclick="sendToBot('topup_menu')">
+            <i class="fas fa-plus-circle"></i> افزایش موجودی
         </button>
     </div>
 
-    <div class="actions-grid">
-        <div class="action-card" onclick="sendAction('open_buy_menu')">
-            <div class="action-icon"><i class="fas fa-shopping-cart"></i></div>
-            <div class="action-text">خرید اشتراک</div>
+    <div class="grid-menu">
+        <div class="menu-item" onclick="sendToBot('open_buy_menu')">
+            <div class="menu-icon"><i class="fas fa-shopping-cart"></i></div>
+            <div class="menu-text">خرید اشتراک</div>
         </div>
-        <div class="action-card" onclick="sendAction('open_services')">
-            <div class="action-icon"><i class="fas fa-server"></i></div>
-            <div class="action-text">سرویس‌های من</div>
+        <div class="menu-item" onclick="sendToBot('open_services')">
+            <div class="menu-icon"><i class="fas fa-server"></i></div>
+            <div class="menu-text">سرویس‌های من</div>
         </div>
-        <div class="action-card" onclick="sendAction('support')">
-            <div class="action-icon"><i class="fas fa-headset"></i></div>
-            <div class="action-text">پشتیبانی</div>
+        <div class="menu-item" onclick="sendToBot('support')">
+            <div class="menu-icon"><i class="fas fa-headset"></i></div>
+            <div class="menu-text">پشتیبانی</div>
         </div>
-        <div class="action-card" onclick="tg.close()">
-            <div class="action-icon"><i class="fas fa-power-off"></i></div>
-            <div class="action-text">خروج</div>
+        <div class="menu-item" onclick="Telegram.WebApp.close()">
+            <div class="menu-icon"><i class="fas fa-power-off"></i></div>
+            <div class="menu-text">خروج</div>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item" onclick="sendAction('support')"><i class="fas fa-comment-dots"></i></div>
-        <div class="nav-item" onclick="sendAction('open_services')"><i class="fas fa-cube"></i></div>
-        <div class="nav-item" onclick="sendAction('topup_menu')"><i class="fas fa-credit-card"></i></div>
-        <div class="nav-item active"><i class="fas fa-home"></i></div>
+        <div class="nav-btn" onclick="sendToBot('support')"><i class="fas fa-comment"></i></div>
+        <div class="nav-btn" onclick="sendToBot('open_services')"><i class="fas fa-cube"></i></div>
+        <div class="nav-btn" onclick="sendToBot('topup_menu')"><i class="fas fa-wallet"></i></div>
+        <div class="nav-btn active"><i class="fas fa-home"></i></div>
     </div>
 
     <script>
+        // راه‌اندازی تلگرام
         const tg = window.Telegram.WebApp;
-        tg.expand(); 
+        tg.expand(); // تمام صفحه
         
-        // تنظیم رنگ هدر مشکی
-        tg.setHeaderColor('#000000');
-        tg.setBackgroundColor('#000000');
+        // تنظیم رنگ هدر برای زیبایی
+        tg.setHeaderColor('#050505');
+        tg.setBackgroundColor('#050505');
 
-        // دریافت اطلاعات کاربر و موجودی از لینک
+        // دریافت پارامترهای موجودی و ریجن از آدرس
         const urlParams = new URLSearchParams(window.location.search);
-        const userBalance = urlParams.get('bal') || '0';
-        const userRegion = urlParams.get('reg') || 'fa';
-        
-        // نمایش پول
-        const currency = userRegion === 'fa' ? 'تومان' : '$';
-        document.getElementById('balanceDisplay').innerText = `${parseInt(userBalance).toLocaleString()} ${currency}`;
+        const bal = urlParams.get('bal') || '0';
+        const reg = urlParams.get('reg') || 'fa';
 
-        // تابع ارسال دستور به ربات
-        function sendAction(actionName) {
-            // ویبره زدن گوشی
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            
+        // نمایش صحیح قیمت
+        const currency = reg === 'fa' ? 'تومان' : '$';
+        document.getElementById('balDisplay').innerText = parseInt(bal).toLocaleString() + ' ' + currency;
+
+        // تابع اصلی ارسال دستور به ربات
+        function sendToBot(action, payload = null) {
+            // ایجاد ویبره کوچک در گوشی
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
             const data = JSON.stringify({
-                action: actionName,
-                payload: null
+                action: action,
+                payload: payload
             });
+
+            // ارسال دیتا و بستن پنجره (رفتار استاندارد دکمه‌های ربات)
             tg.sendData(data);
         }
     </script>
