@@ -5,48 +5,301 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>IMMORTAL VPN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --bg-color: #050a14; --card-bg: rgba(20, 30, 50, 0.8); --neon-blue: #00f3ff; --neon-glow: 0 0 15px rgba(0, 243, 255, 0.6); --text-color: #ffffff; }
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Tahoma', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
-        header { text-align: center; padding: 25px 0; background: linear-gradient(180deg, rgba(0,243,255,0.1) 0%, rgba(5,10,20,0) 100%); }
-        .logo-text { font-size: 26px; font-weight: 900; color: var(--neon-blue); text-shadow: var(--neon-glow); letter-spacing: 2px; margin-bottom: 10px; }
-        .user-balance { font-size: 15px; color: #fff; background: rgba(255, 255, 255, 0.1); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--neon-blue); display: inline-block; box-shadow: var(--neon-glow); }
-        .container { padding: 20px; }
-        .card { background: var(--card-bg); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 20px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); position: relative; overflow: hidden; transition: transform 0.2s; }
-        .card:active { transform: scale(0.98); }
-        .card h3 { margin: 0 0 10px 0; color: var(--neon-blue); }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .btn-primary { background: var(--neon-blue); color: #000; box-shadow: var(--neon-glow); }
-        .btn-outline { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); }
-        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 10px; color: white; text-align: center; font-size: 18px; margin-bottom: 10px; box-sizing: border-box; }
-        input:focus { border-color: var(--neon-blue); outline: none; }
-        .hidden { display: none; }
+        :root {
+            --bg-dark: #050a14;
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --glass-bg: rgba(20, 30, 45, 0.7);
+            --border-color: rgba(0, 243, 255, 0.3);
+            --text-main: #ffffff;
+            --text-sec: #a0aab5;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at top right, rgba(0, 243, 255, 0.1), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(188, 19, 254, 0.1), transparent 40%);
+            color: var(--text-main);
+            font-family: 'Tahoma', sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* Space for bottom nav */
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- HEADER & LOGO --- */
+        .header-section {
+            text-align: center;
+            padding: 30px 20px 10px 20px;
+            position: relative;
+        }
+
+        .logo-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 50%;
+            padding: 5px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            animation: pulse 3s infinite;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--bg-dark);
+            background: #000;
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 900;
+            margin-top: 15px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #fff, var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        /* --- BALANCE CARD --- */
+        .balance-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            margin: 20px;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .balance-info h4 { margin: 0; font-size: 12px; color: var(--text-sec); }
+        .balance-amount { font-size: 20px; font-weight: bold; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
+        
+        .add-funds-btn {
+            background: var(--neon-blue);
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+        }
+
+        /* --- TABS --- */
+        .section { display: none; padding: 0 20px; animation: fadeIn 0.3s ease-in-out; }
+        .section.active { display: block; }
+
+        /* --- SHOP CARDS --- */
+        .plan-card {
+            background: var(--glass-bg);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .plan-card:active { transform: scale(0.98); }
+        
+        .plan-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .plan-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .plan-name { font-size: 18px; font-weight: bold; }
+        .plan-price { font-size: 16px; color: var(--neon-blue); font-weight: bold; }
+        
+        .plan-features {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; color: var(--text-sec);
+        }
+        .feature-item i { color: var(--neon-blue); margin-left: 5px; width: 15px; }
+
+        .buy-btn {
+            width: 100%; margin-top: 15px; padding: 12px;
+            background: transparent; border: 1px solid var(--neon-blue);
+            color: var(--neon-blue); border-radius: 12px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .buy-btn:hover { background: rgba(0, 243, 255, 0.1); }
+
+        /* --- SERVICES / PROFILE --- */
+        .service-card {
+            background: var(--glass-bg); border-radius: 16px; padding: 20px;
+            border: 1px solid var(--border-color); text-align: center; margin-bottom: 20px;
+        }
+        .progress-bar {
+            background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin: 15px 0; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); width: 0%; transition: width 1s;
+        }
+
+        /* --- BOTTOM NAV --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(10, 15, 30, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-around;
+            padding: 10px 0 20px 0; z-index: 1000;
+        }
+
+        .nav-item {
+            color: var(--text-sec); font-size: 11px; text-align: center;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            padding: 8px 15px; border-radius: 12px; transition: 0.3s;
+        }
+        
+        .nav-item i { font-size: 20px; margin-bottom: 2px; }
+        
+        .nav-item.active {
+            color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        /* --- INPUTS --- */
+        .stars-input {
+            width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid #333;
+            border-radius: 12px; color: white; text-align: center; font-size: 18px; margin-bottom: 10px;
+            box-sizing: border-box; transition: 0.3s;
+        }
+        .stars-input:focus { border-color: var(--neon-blue); outline: none; box-shadow: 0 0 10px rgba(0,243,255,0.2); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(0, 243, 255, 0.6); }
+            100% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-text">IMMORTAL VPN</div>
-        <div class="user-balance" id="balanceDisplay">در حال بارگیری...</div>
-    </header>
 
-    <div class="container">
-        <div class="card">
-            <h3><i class="fas fa-shopping-cart"></i> خرید سریع</h3>
-            <p style="font-size: 13px; color: #ccc;">با کلیک روی دکمه زیر، لیست پلن‌ها در ربات برای شما ارسال می‌شود.</p>
-            <button class="btn btn-primary" onclick="sendAction('open_buy_menu')">مشاهده پلن‌ها</button>
+    <div id="home" class="section active">
+        <div class="header-section">
+            <div class="logo-container">
+                <img src="logo.jpg" alt="Immortal VPN" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/924/924915.png'">
+            </div>
+            <div class="brand-name">IMMORTAL VPN</div>
+            <div class="status-badge"><i class="fas fa-shield-alt"></i> سیستم فعال است</div>
         </div>
 
-        <div class="card">
-            <h3><i class="fas fa-star" style="color: yellow;"></i> شارژ با استارز</h3>
-            <p style="font-size: 12px; color: #ccc;">تعداد استارز را وارد کنید (آنی و امن):</p>
-            <input type="number" id="starsInput" placeholder="مثلاً 50">
-            <button class="btn btn-outline" onclick="buyStars()">پرداخت</button>
+        <div class="balance-card">
+            <div class="balance-info">
+                <h4>موجودی کیف پول</h4>
+                <div class="balance-amount" id="balanceDisplay">...</div>
+            </div>
+            <button class="add-funds-btn" onclick="switchTab('wallet')">
+                <i class="fas fa-plus"></i> افزایش
+            </button>
         </div>
+
+        <h3 style="margin: 0 20px 10px; font-size: 16px; border-right: 3px solid var(--neon-blue); padding-right: 10px;">پیشنهاد ویژه</h3>
         
-        <div class="card">
-             <h3><i class="fas fa-user-shield"></i> سرویس‌های من</h3>
-             <button class="btn btn-outline" onclick="sendAction('open_services')">مدیریت سرویس‌ها</button>
+        <div class="plan-card" style="background: linear-gradient(135deg, rgba(0,243,255,0.1), transparent);">
+            <div class="plan-top">
+                <span class="plan-name">💎 اشتراک VIP</span>
+                <span class="plan-price">شروع از 150ت</span>
+            </div>
+            <div class="plan-features" style="display: block; margin-bottom: 15px;">
+                <p style="margin: 5px 0; font-size: 12px; color: #ccc;">سرعت بالا، بدون قطعی، مناسب اینستاگرام و یوتیوب</p>
+            </div>
+            <button class="buy-btn" style="background: var(--neon-blue); color: #000;" onclick="switchTab('shop')">مشاهده همه پلن‌ها</button>
+        </div>
+    </div>
+
+    <div id="shop" class="section">
+        <h2 style="text-align: center; margin-bottom: 20px;">📦 فروشگاه پلن‌ها</h2>
+        
+        <div class="plan-card">
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-list-ul" style="font-size: 40px; color: var(--neon-blue); margin-bottom: 15px;"></i>
+                <p>برای دریافت لیست کامل و به‌روز پلن‌ها از سرور، دکمه زیر را بزنید.</p>
+                <button class="buy-btn" onclick="sendAction('open_buy_menu')">📥 دریافت لیست پلن‌ها</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="services" class="section">
+        <h2 style="text-align: center; margin-bottom: 20px;">📡 سرویس‌های من</h2>
+        
+        <div class="service-card">
+            <i class="fas fa-server" style="font-size: 40px; color: var(--text-sec); margin-bottom: 10px;"></i>
+            <h3>مدیریت اشتراک‌ها</h3>
+            <p style="font-size: 12px; color: #aaa;">مشاهده حجم باقی‌مانده، تمدید و دریافت لینک اتصال</p>
+            <button class="buy-btn" onclick="sendAction('open_services')">📂 باز کردن لیست سرویس‌ها</button>
+        </div>
+    </div>
+
+    <div id="wallet" class="section">
+        <h2 style="text-align: center; margin-bottom: 20px;">💳 کیف پول</h2>
+        
+        <div class="plan-card">
+            <div style="text-align: center;">
+                <i class="fas fa-star" style="font-size: 50px; color: #FFD700; text-shadow: 0 0 20px #FFD700;"></i>
+                <h3 style="margin: 10px 0;">شارژ با استارز</h3>
+                <p style="font-size: 12px; color: #ccc; margin-bottom: 20px;">سریع‌ترین روش پرداخت (آنی)</p>
+                
+                <input type="number" id="starsInput" class="stars-input" placeholder="تعداد استارز (مثلاً 100)">
+                <button class="buy-btn" style="background: #FFD700; color: #000; border-color: #FFD700;" onclick="buyStars()">✨ پرداخت و شارژ</button>
+            </div>
+        </div>
+
+        <div class="plan-card">
+            <div style="text-align: center;">
+                <i class="fas fa-credit-card" style="font-size: 30px; color: var(--text-sec);"></i>
+                <h3 style="font-size: 16px; margin: 10px 0;">سایر روش‌ها</h3>
+                <button class="buy-btn" onclick="tg.close()">بازگشت به ربات برای کارت‌به‌کارت</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home')">
+            <i class="fas fa-home"></i>
+            <span>خانه</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('shop')">
+            <i class="fas fa-shopping-bag"></i>
+            <span>خرید</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('services')">
+            <i class="fas fa-layer-group"></i>
+            <span>سرویس‌ها</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('wallet')">
+            <i class="fas fa-wallet"></i>
+            <span>کیف پول</span>
         </div>
     </div>
 
@@ -56,27 +309,43 @@
         tg.setHeaderColor('#050a14');
         tg.setBackgroundColor('#050a14');
 
-        // دریافت اطلاعات از URL (این بخش کلید هماهنگی با ربات است)
+        // URL Params Logic
         const urlParams = new URLSearchParams(window.location.search);
         const userBalance = urlParams.get('bal') || '0';
         const userRegion = urlParams.get('reg') || 'fa';
         const currency = userRegion === 'fa' ? 'تومان' : '$';
 
-        // نمایش موجودی هماهنگ شده
-        document.getElementById('balanceDisplay').innerText = `💰 موجودی: ${parseInt(userBalance).toLocaleString()} ${currency}`;
+        // Update UI with Data
+        const balEl = document.getElementById('balanceDisplay');
+        balEl.innerText = `${parseInt(userBalance).toLocaleString()} ${currency}`;
+        
+        // Tab Logic
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            // Remove active class from navs
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
+            // Show target
+            document.getElementById(tabId).classList.add('active');
+            
+            // Highlight nav
+            const tabs = ['home', 'shop', 'services', 'wallet'];
+            const index = tabs.indexOf(tabId);
+            if(index !== -1) {
+                document.querySelectorAll('.nav-item')[index].classList.add('active');
+            }
+        }
+
+        // Send Data to Bot
         function sendAction(action, payload = null) {
-            const data = JSON.stringify({ action: action, payload: payload });
-            tg.sendData(data);
+            tg.sendData(JSON.stringify({ action, payload }));
         }
 
         function buyStars() {
-            const amount = document.getElementById('starsInput').value;
-            if (amount && amount > 0) {
-                sendAction('topup_stars', amount);
-            } else {
-                tg.showPopup({ title: 'خطا', message: 'لطفاً یک عدد معتبر وارد کنید.' });
-            }
+            const val = document.getElementById('starsInput').value;
+            if(val && val > 0) sendAction('topup_stars', val);
+            else tg.showPopup({title: 'خطا', message: 'لطفاً مبلغ معتبر وارد کنید'});
         }
     </script>
 </body>
