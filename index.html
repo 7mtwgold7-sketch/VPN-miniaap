@@ -11,73 +11,68 @@
             margin: 0; padding: 0; font-family: 'Tahoma', sans-serif;
             background-color: #000; color: white; overflow-x: hidden;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-            padding-bottom: 90px; user-select: none;
+            padding-bottom: 90px; user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
+        /* پس زمینه گلادیاتور */
         .bg-video {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.35; object-fit: cover;
+            z-index: -1; opacity: 0.3; object-fit: cover;
             background: url('bg.gif') no-repeat center center / cover;
         }
-        
-        .page { display: none; width: 100%; animation: fade 0.3s; }
-        .page.active { display: flex; flex-direction: column; align-items: center; }
-        @keyframes fade { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
 
-        /* Header */
-        .header { margin-top: 25px; text-align: center; }
+        .page { display: none; width: 100%; max-width: 400px; animation: fade 0.2s; padding-bottom: 100px; }
+        .page.active { display: flex; flex-direction: column; align-items: center; }
+        @keyframes fade { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
+        /* هدر */
         .logo-box {
-            width: 90px; height: 90px; margin: 0 auto;
-            border-radius: 50%; border: 2px solid #00f3ff;
-            box-shadow: 0 0 15px #00f3ff; overflow: hidden; background: #000;
+            width: 100px; height: 100px; margin: 30px auto 10px;
+            border-radius: 50%; border: 3px solid #00f3ff;
+            box-shadow: 0 0 20px #00f3ff; overflow: hidden; background: #000;
         }
         .logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .title { margin-top: 10px; font-size: 18px; font-weight: bold; color: #00f3ff; text-shadow: 0 0 10px #00f3ff; }
+        .app-title { font-size: 20px; font-weight: bold; color: #00f3ff; text-shadow: 0 0 10px #00f3ff; margin-bottom: 20px; }
 
-        /* Balance Card */
-        .balance-card {
-            background: rgba(30, 30, 30, 0.8); width: 85%; padding: 20px;
-            border-radius: 20px; text-align: center; margin: 20px 0;
-            border: 1px solid rgba(0, 243, 255, 0.2); backdrop-filter: blur(5px);
+        /* کارت ها */
+        .card {
+            background: rgba(30, 30, 30, 0.85); width: 85%; padding: 20px;
+            border-radius: 18px; text-align: center; margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px);
         }
-        .amount { font-size: 28px; font-weight: bold; margin: 5px 0; display: block;}
-
-        /* Buttons & Inputs */
-        .btn {
-            background: linear-gradient(45deg, #00f3ff, #0066ff); color: #000;
-            border: none; padding: 12px; width: 90%; border-radius: 12px;
-            font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-        }
-        .btn:active { transform: scale(0.96); }
-        .btn-outline { background: transparent; border: 1px solid #00f3ff; color: #00f3ff; }
-
-        input, textarea {
-            width: 85%; padding: 12px; background: rgba(0,0,0,0.5);
-            border: 1px solid #444; border-radius: 10px; color: white;
-            margin-bottom: 10px; font-family: inherit; text-align: center;
-        }
-        input:focus, textarea:focus { border-color: #00f3ff; outline: none; }
-
-        /* Plan Cards */
+        
         .plan-item {
-            background: rgba(255,255,255,0.05); width: 85%; padding: 15px;
+            background: rgba(255,255,255,0.05); width: 90%; padding: 15px;
             border-radius: 15px; margin-bottom: 10px; display: flex;
-            justify-content: space-between; align-items: center;
-            border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+            justify-content: space-between; align-items: center; cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.2s;
         }
-        .plan-item:active { background: rgba(0,243,255,0.1); border-color: #00f3ff; }
-        .plan-info { text-align: right; }
-        .plan-price { color: #00f3ff; font-weight: bold; }
+        .plan-item:active { background: rgba(0, 243, 255, 0.1); border-color: #00f3ff; }
+        
+        .btn {
+            background: linear-gradient(90deg, #00f3ff, #0066ff); color: #000;
+            border: none; padding: 12px; width: 100%; border-radius: 12px;
+            font-weight: bold; font-size: 15px; margin-top: 10px; cursor: pointer;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-red { background: linear-gradient(90deg, #ff4444, #cc0000); color: white; }
 
-        /* Bottom Nav */
-        .nav {
-            position: fixed; bottom: 20px; width: 90%; height: 60px;
-            background: rgba(15, 15, 15, 0.95); border-radius: 30px;
-            display: flex; justify-content: space-around; align-items: center;
-            border: 1px solid #333; box-shadow: 0 5px 20px #000; z-index: 100;
+        /* اینپوت */
+        input, select {
+            width: 90%; padding: 12px; background: rgba(0,0,0,0.6);
+            border: 1px solid #555; border-radius: 10px; color: white;
+            margin-bottom: 10px; font-family: inherit; text-align: center; font-size: 16px;
         }
-        .nav-icon { color: #666; font-size: 22px; padding: 10px; transition: 0.3s; cursor: pointer;}
+        input:focus { border-color: #00f3ff; outline: none; }
+
+        /* نوار پایین */
+        .nav {
+            position: fixed; bottom: 20px; width: 90%; height: 65px;
+            background: rgba(15, 15, 15, 0.95); border-radius: 40px;
+            display: flex; justify-content: space-around; align-items: center;
+            border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px #000; z-index: 999;
+        }
+        .nav-icon { color: #666; font-size: 24px; padding: 10px; transition: 0.3s; }
         .nav-icon.active {
             color: #000; background: #00f3ff; border-radius: 50%;
             width: 45px; height: 45px; display: flex; justify-content: center; align-items: center;
@@ -89,85 +84,92 @@
     <div class="bg-video"></div>
 
     <div id="home" class="page active">
-        <div class="header">
-            <div class="logo-box"><img src="logo.jpg" onerror="this.style.display='none'"></div>
-            <div class="title">IMMORTAL VPN</div>
-        </div>
-        <div class="balance-card">
-            <span style="font-size: 12px; color: #aaa;">موجودی حساب</span>
-            <span class="amount" id="balDisplay">...</span>
+        <div class="logo-box"><img src="logo.jpg"></div>
+        <div class="app-title">IMMORTAL VPN</div>
+
+        <div class="card">
+            <div style="font-size: 12px; color: #aaa;">موجودی کیف پول</div>
+            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;" id="balDisplay">0 تومان</div>
             <button class="btn" onclick="nav('wallet')">افزایش موجودی</button>
         </div>
-        <div style="width: 100%; text-align: center;">
-            <div class="plan-item" onclick="nav('shop')" style="margin: 0 auto 10px auto;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <i class="fas fa-shopping-cart" style="color:#00f3ff"></i>
-                    <span>خرید اشتراک جدید</span>
-                </div>
-                <i class="fas fa-chevron-left" style="font-size:12px; color:#555;"></i>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 90%;">
+            <div class="card" style="width: auto; margin:0;" onclick="nav('shop')">
+                <i class="fas fa-shopping-cart" style="font-size:25px; color:#00f3ff; margin-bottom:10px;"></i>
+                <div style="font-size:13px;">خرید اشتراک</div>
             </div>
-            <div class="plan-item" onclick="send('get_my_services')" style="margin: 0 auto 10px auto;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <i class="fas fa-server" style="color:#00f3ff"></i>
-                    <span>سرویس‌های من</span>
-                </div>
-                <i class="fas fa-chevron-left" style="font-size:12px; color:#555;"></i>
+            <div class="card" style="width: auto; margin:0;" onclick="send('open_services')">
+                <i class="fas fa-server" style="font-size:25px; color:#00f3ff; margin-bottom:10px;"></i>
+                <div style="font-size:13px;">سرویس‌های من</div>
             </div>
         </div>
     </div>
 
     <div id="shop" class="page">
         <h2 style="color:#00f3ff;">فروشگاه</h2>
-        <p style="font-size:12px; color:#aaa; margin-bottom:20px;">پلن مورد نظر را انتخاب کنید</p>
-        
-        <div class="plan-item" onclick="buyPlan(1)">
-            <div class="plan-info">
-                <div style="font-weight:bold;">یک ماهه - 30 گیگ</div>
-                <div style="font-size:11px; color:#888;">پرسرعت • بدون محدودیت</div>
-            </div>
-            <div class="plan-price">خرید</div>
+        <div id="plans-container" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <p style="color: #aaa;">در حال بارگیری پلن‌ها...</p>
         </div>
-
-        <div class="plan-item" onclick="buyPlan(2)">
-            <div class="plan-info">
-                <div style="font-weight:bold;">سه ماهه - 100 گیگ</div>
-                <div style="font-size:11px; color:#888;">مناسب دانلود • اقتصادی</div>
-            </div>
-            <div class="plan-price">خرید</div>
-        </div>
-        
-        <button class="btn btn-outline" style="width:85%; margin-top:20px;" onclick="send('get_plans_list')">
-            🔄 دریافت لیست جدید پلن‌ها
-        </button>
     </div>
 
     <div id="wallet" class="page">
-        <h2 style="color:#00f3ff;">کیف پول</h2>
+        <h2 style="color:#00f3ff;">شارژ حساب</h2>
         
-        <div class="balance-card">
-            <i class="fas fa-star" style="font-size:40px; color:yellow; margin-bottom:10px;"></i>
-            <h3>شارژ سریع (Stars)</h3>
-            <input type="number" id="starsInput" placeholder="تعداد (مثلا 50)">
-            <button class="btn" onclick="payStars()">پرداخت</button>
+        <div id="wallet-main" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+            <div class="card" onclick="showCrypto()">
+                <i class="fas fa-coins" style="font-size:30px; color:orange; margin-bottom:10px;"></i>
+                <h3>شارژ ارزی / کریپتو</h3>
+                <p style="font-size:11px; color:#aaa;">USDT, TRX, ...</p>
+            </div>
+            <div class="card" onclick="showStars()">
+                <i class="fas fa-star" style="font-size:30px; color:yellow; margin-bottom:10px;"></i>
+                <h3>شارژ با Stars</h3>
+                <p style="font-size:11px; color:#aaa;">تلگرام استارز</p>
+            </div>
         </div>
 
-        <div class="plan-item" onclick="send('topup_crypto')" style="margin: 0 auto;">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-coins" style="color:#00f3ff"></i>
-                <span>پرداخت ارزی / کریپتو</span>
+        <div id="wallet-crypto" style="display:none; width:100%; flex-direction:column; align-items:center;">
+            <div class="card">
+                <h3>1. انتخاب ارز</h3>
+                <select id="coinSelect" onchange="updateNetworks()">
+                    <option value="usdt">USDT (تتر)</option>
+                    <option value="trx">TRX (ترون)</option>
+                </select>
+                
+                <h3>2. انتخاب شبکه</h3>
+                <select id="netSelect">
+                    <option value="trc20">TRC20</option>
+                    <option value="erc20">ERC20</option>
+                    <option value="bep20">BEP20</option>
+                </select>
+
+                <h3>3. مقدار</h3>
+                <input type="number" id="cryptoAmount" placeholder="مثلاً 10">
+                
+                <button class="btn" onclick="submitCrypto()">ادامه و پرداخت</button>
+                <button class="btn btn-red" onclick="resetWallet()">بازگشت</button>
             </div>
-            <i class="fas fa-chevron-left"></i>
+        </div>
+
+        <div id="wallet-stars" style="display:none; width:100%; flex-direction:column; align-items:center;">
+            <div class="card">
+                <i class="fas fa-star" style="color:yellow; font-size:40px;"></i>
+                <p>تعداد استارز را وارد کنید:</p>
+                <input type="number" id="starsAmount" placeholder="50">
+                <button class="btn" onclick="submitStars()">پرداخت</button>
+                <button class="btn btn-red" onclick="resetWallet()">بازگشت</button>
+            </div>
         </div>
     </div>
 
     <div id="support" class="page">
         <h2 style="color:#00f3ff;">پشتیبانی</h2>
-        <div class="balance-card">
-            <p style="font-size:13px;">پیام خود را بنویسید، ما در اسرع وقت پاسخ می‌دهیم.</p>
-            <textarea id="ticketMsg" rows="4" placeholder="متن پیام..."></textarea>
-            <button class="btn" onclick="sendTicket()">ارسال تیکت</button>
+        <div class="card">
+            <p>پیام خود را بنویسید:</p>
+            <input type="text" id="ticketMsg" placeholder="متن پیام..." style="height: 100px;">
+            <button class="btn" onclick="sendTicket()">ارسال</button>
         </div>
-        <button class="btn btn-outline" style="width:85%;" onclick="Telegram.WebApp.close()">خروج</button>
+        <button class="btn btn-red" style="width:85%;" onclick="tg.close()">خروج</button>
     </div>
 
     <div class="nav">
@@ -179,46 +181,103 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); tg.setHeaderColor('#000000');
+        tg.expand(); 
+        tg.setHeaderColor('#000000');
 
-        // URL Params
-        const p = new URLSearchParams(window.location.search);
-        const bal = parseInt(p.get('bal')||0).toLocaleString();
-        const cur = (p.get('reg')||'fa')==='fa'?'تومان':'$';
-        document.getElementById('balDisplay').innerText = `${bal} ${cur}`;
+        // دریافت اطلاعات از URL (اینجا لیست پلن‌ها از ربات میاد)
+        const params = new URLSearchParams(window.location.search);
+        const bal = parseInt(params.get('bal') || 0).toLocaleString();
+        const plansRaw = params.get('plans') || ""; 
+        
+        document.getElementById('balDisplay').innerText = bal + " تومان";
 
-        // Navigation
-        function nav(id) {
-            document.querySelectorAll('.page').forEach(e => e.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-icon').forEach(e => e.classList.remove('active'));
-            const idx = ['support','shop','wallet','home'].indexOf(id);
+        // ساخت لیست پلن‌ها
+        const container = document.getElementById('plans-container');
+        if (plansRaw) {
+            container.innerHTML = "";
+            // فرمت دیتا: id-name-price-gb_id-name...
+            const list = plansRaw.split('_');
+            list.forEach(item => {
+                if(!item) return;
+                const [id, name, price, gb] = item.split('-');
+                const div = document.createElement('div');
+                div.className = 'plan-item';
+                div.innerHTML = `
+                    <div style="text-align:right;">
+                        <div style="font-weight:bold; color:white;">${decodeURIComponent(name)}</div>
+                        <div style="font-size:12px; color:#aaa;">${gb} گیگابایت</div>
+                    </div>
+                    <div style="text-align:left;">
+                        <div style="color:#00f3ff; font-weight:bold;">${parseInt(price).toLocaleString()} ت</div>
+                    </div>
+                `;
+                div.onclick = () => {
+                    if(confirm(`آیا مطمئن هستید؟\nخرید: ${decodeURIComponent(name)}`)) {
+                        send('execute_buy', id);
+                    }
+                };
+                container.appendChild(div);
+            });
+        } else {
+            container.innerHTML = '<p style="color:red;">لیست پلن‌ها خالی است یا دریافت نشد.</p>';
+        }
+
+        // توابع ناوبری
+        function nav(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
+            document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
+            const idx = ['support','shop','wallet','home'].indexOf(page);
             if(idx>=0) document.querySelectorAll('.nav-icon')[idx].classList.add('active');
         }
 
-        // Main Send Function
+        function resetWallet() {
+            document.getElementById('wallet-crypto').style.display = 'none';
+            document.getElementById('wallet-stars').style.display = 'none';
+            document.getElementById('wallet-main').style.display = 'flex';
+        }
+        function showCrypto() {
+            document.getElementById('wallet-main').style.display = 'none';
+            document.getElementById('wallet-crypto').style.display = 'flex';
+        }
+        function showStars() {
+            document.getElementById('wallet-main').style.display = 'none';
+            document.getElementById('wallet-stars').style.display = 'flex';
+        }
+
+        // ارسال به ربات
         function send(action, payload=null) {
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            tg.sendData(JSON.stringify({action, payload}));
+            tg.HapticFeedback.impactOccurred('medium');
+            const data = JSON.stringify({ action, payload });
+            tg.sendData(data);
         }
 
-        // Actions
-        function buyPlan(id) {
-            if(confirm('آیا از خرید این پلن اطمینان دارید؟')) {
-                send('execute_buy', id);
-            }
+        // لاجیک‌های دکمه‌ها
+        function submitCrypto() {
+            const coin = document.getElementById('coinSelect').value;
+            const net = document.getElementById('netSelect').value;
+            const amt = document.getElementById('cryptoAmount').value;
+            if(!amt) return alert('مقدار را وارد کنید');
+            // فرمت: coin:net:amount
+            send('execute_crypto_pay', `${coin}:${net}:${amt}`);
         }
 
-        function payStars() {
-            const val = document.getElementById('starsInput').value;
-            if(val > 0) send('execute_stars', val);
-            else tg.showPopup({message:'لطفا عدد صحیح وارد کنید'});
+        function submitStars() {
+            const val = document.getElementById('starsAmount').value;
+            if(val) send('topup_stars', val);
         }
 
         function sendTicket() {
             const txt = document.getElementById('ticketMsg').value;
-            if(txt.length > 2) send('execute_ticket', txt);
-            else tg.showPopup({message:'متن پیام کوتاه است'});
+            if(txt) send('execute_ticket', txt);
+        }
+        
+        function updateNetworks() {
+            const c = document.getElementById('coinSelect').value;
+            const n = document.getElementById('netSelect');
+            n.innerHTML = '';
+            if(c === 'trx') n.innerHTML = '<option value="trc20">TRC20</option>';
+            else n.innerHTML = '<option value="trc20">TRC20</option><option value="erc20">ERC20</option><option value="bep20">BEP20</option>';
         }
     </script>
 </body>
