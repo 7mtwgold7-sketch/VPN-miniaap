@@ -2,351 +2,261 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>IMMORTAL VPN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* --- RESET & FONTS --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        @font-face { font-family: 'Vazir'; src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff2') format('woff2'); }
+        
         :root {
-            --bg-dark: #050a14;
-            --neon-blue: #00f3ff;
-            --neon-purple: #bc13fe;
-            --glass-bg: rgba(20, 30, 45, 0.7);
-            --border-color: rgba(0, 243, 255, 0.3);
-            --text-main: #ffffff;
-            --text-sec: #a0aab5;
+            --primary: #00e5ff; /* Cyan Neon */
+            --accent: #ff0055; /* Battle Red */
+            --glass: rgba(10, 15, 25, 0.8); /* Darker Glass */
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
         }
 
         body {
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at top right, rgba(0, 243, 255, 0.1), transparent 40%),
-                              radial-gradient(circle at bottom left, rgba(188, 19, 254, 0.1), transparent 40%);
-            color: var(--text-main);
-            font-family: 'Tahoma', sans-serif;
-            margin: 0;
-            padding: 0;
-            padding-bottom: 80px; /* Space for bottom nav */
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0; font-family: 'Vazir', sans-serif;
+            background: #000; color: var(--text); overflow: hidden; height: 100vh;
         }
 
-        /* --- HEADER & LOGO --- */
-        .header-section {
-            text-align: center;
-            padding: 30px 20px 10px 20px;
-            position: relative;
+        /* --- BACKGROUND ENGINE (GIF/WEBP) --- */
+        #bg-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            /* UPLOAD 'bg.gif' or 'bg.webp' TO GITHUB */
+            background-image: url('bg.gif'); /* Change .gif to .webp if needed */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: brightness(0.6) contrast(1.2); /* Make it dark and dramatic */
+        }
+        #particles-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+            mix-blend-mode: screen; /* Makes sparks glow */
+        }
+        .cinematic-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, #000 15%, rgba(0,0,0,0.4) 50%, #000 85%);
+            z-index: -1;
         }
 
-        .logo-container {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto;
-            position: relative;
-            border-radius: 50%;
-            padding: 5px;
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
-            animation: pulse 3s infinite;
+        /* --- LAYOUT --- */
+        .app-container {
+            height: 100%; display: flex; flex-direction: column;
+            padding-bottom: 80px; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
         }
 
-        .logo-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--bg-dark);
-            background: #000;
+        /* --- HEADER --- */
+        .header { text-align: center; padding: 20px; animation: fadeInDown 1s ease; }
+        .logo-box {
+            width: 100px; height: 100px; margin: 0 auto;
+            border-radius: 50%; border: 3px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary), inset 0 0 20px var(--primary);
+            overflow: hidden; position: relative;
+        }
+        .logo-img { width: 100%; height: 100%; object-fit: cover; }
+        .app-title {
+            font-size: 20px; font-weight: 900; margin-top: 10px; text-transform: uppercase; letter-spacing: 2px;
+            background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
         }
 
-        .brand-name {
-            font-size: 22px;
-            font-weight: 900;
-            margin-top: 15px;
-            text-transform: uppercase;
-            background: linear-gradient(90deg, #fff, var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
+        /* --- 3D CARDS --- */
+        .card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px; padding: 20px; margin: 15px 20px;
+            transform-style: preserve-3d; transform: perspective(1000px); transition: transform 0.1s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .section-title {
+            font-size: 16px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+            color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;
         }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 10px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
+        /* --- ELEMENTS --- */
+        .balance-display { font-size: 28px; font-weight: bold; text-align: center; text-shadow: 0 0 15px var(--primary); margin: 10px 0; }
+        .btn {
+            width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 14px; font-weight: bold; color: #000;
+            cursor: pointer; margin-top: 10px; position: relative; overflow: hidden; display: flex; justify-content: center;
+            align-items: center; gap: 8px; transition: 0.3s;
         }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), #0099ff); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+        .btn-accent { background: linear-gradient(135deg, var(--accent), #ff5e00); color: white; box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
+        .btn-glass { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn:active { transform: scale(0.95); }
 
-        /* --- BALANCE CARD --- */
-        .balance-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-            margin: 20px;
-            padding: 15px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .balance-info h4 { margin: 0; font-size: 12px; color: var(--text-sec); }
-        .balance-amount { font-size: 20px; font-weight: bold; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
-        
-        .add-funds-btn {
-            background: var(--neon-blue);
-            color: #000;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
-        }
-
-        /* --- TABS --- */
-        .section { display: none; padding: 0 20px; animation: fadeIn 0.3s ease-in-out; }
+        /* --- SECTIONS & NAV --- */
+        .section { display: none; animation: slideUp 0.4s ease forwards; }
         .section.active { display: block; }
-
-        /* --- SHOP CARDS --- */
-        .plan-card {
-            background: var(--glass-bg);
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s;
+        .nav-bar {
+            position: fixed; bottom: 15px; left: 15px; right: 15px; height: 65px;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-radius: 30px;
+            display: flex; justify-content: space-around; align-items: center;
+            border: 1px solid var(--glass-border); z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.8);
         }
-
-        .plan-card:active { transform: scale(0.98); }
-        
-        .plan-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue);
-        }
-
-        .plan-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .plan-name { font-size: 18px; font-weight: bold; }
-        .plan-price { font-size: 16px; color: var(--neon-blue); font-weight: bold; }
-        
-        .plan-features {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; color: var(--text-sec);
-        }
-        .feature-item i { color: var(--neon-blue); margin-left: 5px; width: 15px; }
-
-        .buy-btn {
-            width: 100%; margin-top: 15px; padding: 12px;
-            background: transparent; border: 1px solid var(--neon-blue);
-            color: var(--neon-blue); border-radius: 12px;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        .buy-btn:hover { background: rgba(0, 243, 255, 0.1); }
-
-        /* --- SERVICES / PROFILE --- */
-        .service-card {
-            background: var(--glass-bg); border-radius: 16px; padding: 20px;
-            border: 1px solid var(--border-color); text-align: center; margin-bottom: 20px;
-        }
-        .progress-bar {
-            background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin: 15px 0; overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); width: 0%; transition: width 1s;
-        }
-
-        /* --- BOTTOM NAV --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(10, 15, 30, 0.95);
-            backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; justify-content: space-around;
-            padding: 10px 0 20px 0; z-index: 1000;
-        }
-
-        .nav-item {
-            color: var(--text-sec); font-size: 11px; text-align: center;
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
-            padding: 8px 15px; border-radius: 12px; transition: 0.3s;
-        }
-        
-        .nav-item i { font-size: 20px; margin-bottom: 2px; }
-        
-        .nav-item.active {
-            color: var(--neon-blue);
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
-        }
+        .nav-item { color: #888; font-size: 20px; transition: 0.3s; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        .nav-item.active { color: #fff; background: var(--primary); box-shadow: 0 0 15px var(--primary); transform: translateY(-5px); }
 
         /* --- INPUTS --- */
-        .stars-input {
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid #333;
-            border-radius: 12px; color: white; text-align: center; font-size: 18px; margin-bottom: 10px;
-            box-sizing: border-box; transition: 0.3s;
+        input {
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
+            border-radius: 10px; color: white; text-align: center; font-size: 16px; outline: none;
         }
-        .stars-input:focus { border-color: var(--neon-blue); outline: none; box-shadow: 0 0 10px rgba(0,243,255,0.2); }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
-            50% { box-shadow: 0 0 40px rgba(0, 243, 255, 0.6); }
-            100% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="home" class="section active">
-        <div class="header-section">
-            <div class="logo-container">
-                <img src="logo.jpg" alt="Immortal VPN" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/924/924915.png'">
-            </div>
-            <div class="brand-name">IMMORTAL VPN</div>
-            <div class="status-badge"><i class="fas fa-shield-alt"></i> سیستم فعال است</div>
-        </div>
-
-        <div class="balance-card">
-            <div class="balance-info">
-                <h4>موجودی کیف پول</h4>
-                <div class="balance-amount" id="balanceDisplay">...</div>
-            </div>
-            <button class="add-funds-btn" onclick="switchTab('wallet')">
-                <i class="fas fa-plus"></i> افزایش
-            </button>
-        </div>
-
-        <h3 style="margin: 0 20px 10px; font-size: 16px; border-right: 3px solid var(--neon-blue); padding-right: 10px;">پیشنهاد ویژه</h3>
+    <div id="bg-container"></div> <div class="cinematic-overlay"></div> <canvas id="particles-canvas"></canvas> <div class="app-container">
         
-        <div class="plan-card" style="background: linear-gradient(135deg, rgba(0,243,255,0.1), transparent);">
-            <div class="plan-top">
-                <span class="plan-name">💎 اشتراک VIP</span>
-                <span class="plan-price">شروع از 150ت</span>
+        <div class="header">
+            <div class="logo-box">
+                <img src="logo.jpg" alt="Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/924/924915.png'">
             </div>
-            <div class="plan-features" style="display: block; margin-bottom: 15px;">
-                <p style="margin: 5px 0; font-size: 12px; color: #ccc;">سرعت بالا، بدون قطعی، مناسب اینستاگرام و یوتیوب</p>
+            <div class="app-title">IMMORTAL VPN</div>
+        </div>
+
+        <div id="home" class="section active">
+            <div class="card tilt-card">
+                <div style="font-size: 12px; color: #aaa;">موجودی کیف پول</div>
+                <div class="balance-display" id="balanceDisplay">...</div>
+                <button class="btn btn-primary" onclick="switchTab('wallet')"><i class="fas fa-plus-circle"></i> شارژ حساب</button>
             </div>
-            <button class="buy-btn" style="background: var(--neon-blue); color: #000;" onclick="switchTab('shop')">مشاهده همه پلن‌ها</button>
-        </div>
-    </div>
 
-    <div id="shop" class="section">
-        <h2 style="text-align: center; margin-bottom: 20px;">📦 فروشگاه پلن‌ها</h2>
-        
-        <div class="plan-card">
-            <div style="text-align: center; padding: 20px;">
-                <i class="fas fa-list-ul" style="font-size: 40px; color: var(--neon-blue); margin-bottom: 15px;"></i>
-                <p>برای دریافت لیست کامل و به‌روز پلن‌ها از سرور، دکمه زیر را بزنید.</p>
-                <button class="buy-btn" onclick="sendAction('open_buy_menu')">📥 دریافت لیست پلن‌ها</button>
+            <div class="card tilt-card" style="border-left: 3px solid #00ff88;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div><div style="font-weight: bold; font-size: 14px;">وضعیت اتصال</div><div style="font-size: 12px; color: #00ff88;">پایدار و ایمن ✅</div></div>
+                    <i class="fas fa-shield-alt" style="font-size: 24px; color: #00ff88;"></i>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div id="services" class="section">
-        <h2 style="text-align: center; margin-bottom: 20px;">📡 سرویس‌های من</h2>
-        
-        <div class="service-card">
-            <i class="fas fa-server" style="font-size: 40px; color: var(--text-sec); margin-bottom: 10px;"></i>
-            <h3>مدیریت اشتراک‌ها</h3>
-            <p style="font-size: 12px; color: #aaa;">مشاهده حجم باقی‌مانده، تمدید و دریافت لینک اتصال</p>
-            <button class="buy-btn" onclick="sendAction('open_services')">📂 باز کردن لیست سرویس‌ها</button>
-        </div>
-    </div>
-
-    <div id="wallet" class="section">
-        <h2 style="text-align: center; margin-bottom: 20px;">💳 کیف پول</h2>
-        
-        <div class="plan-card">
-            <div style="text-align: center;">
-                <i class="fas fa-star" style="font-size: 50px; color: #FFD700; text-shadow: 0 0 20px #FFD700;"></i>
-                <h3 style="margin: 10px 0;">شارژ با استارز</h3>
-                <p style="font-size: 12px; color: #ccc; margin-bottom: 20px;">سریع‌ترین روش پرداخت (آنی)</p>
-                
-                <input type="number" id="starsInput" class="stars-input" placeholder="تعداد استارز (مثلاً 100)">
-                <button class="buy-btn" style="background: #FFD700; color: #000; border-color: #FFD700;" onclick="buyStars()">✨ پرداخت و شارژ</button>
+            <div class="card tilt-card">
+                <div class="section-title"><i class="fas fa-rocket"></i> دسترسی سریع</div>
+                <button class="btn btn-glass" onclick="sendAction('open_buy_menu')">خرید اشتراک جدید</button>
+                <button class="btn btn-glass" onclick="sendAction('open_services')">مدیریت سرویس‌ها</button>
             </div>
         </div>
 
-        <div class="plan-card">
-            <div style="text-align: center;">
-                <i class="fas fa-credit-card" style="font-size: 30px; color: var(--text-sec);"></i>
-                <h3 style="font-size: 16px; margin: 10px 0;">سایر روش‌ها</h3>
-                <button class="buy-btn" onclick="tg.close()">بازگشت به ربات برای کارت‌به‌کارت</button>
+        <div id="shop" class="section">
+            <div class="card tilt-card">
+                <div class="section-title"><i class="fas fa-shopping-cart"></i> فروشگاه پلن‌ها</div>
+                <p style="font-size: 13px; color: #ccc; line-height: 1.6;">برای مشاهده لیست کامل پلن‌ها، دکمه زیر را لمس کنید تا ربات لیست را ارسال کند.</p>
+                <button class="btn btn-primary" onclick="sendAction('open_buy_menu')"><i class="fas fa-list"></i> دریافت لیست قیمت</button>
+            </div>
+        </div>
+
+        <div id="services" class="section">
+            <div class="card tilt-card">
+                <div class="section-title"><i class="fas fa-server"></i> سرویس‌های فعال</div>
+                <div style="text-align: center; padding: 10px;">
+                    <i class="fas fa-wifi" style="font-size: 40px; color: var(--primary); margin-bottom: 10px;"></i>
+                    <p style="font-size: 12px;">مشاهده حجم، تمدید و دریافت لینک اتصال</p>
+                    <button class="btn btn-primary" onclick="sendAction('open_services')">مدیریت اشتراک‌ها</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="wallet" class="section">
+            <div class="card tilt-card">
+                <div class="section-title"><i class="fas fa-wallet"></i> شارژ کیف پول</div>
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <i class="fas fa-star" style="font-size: 50px; color: #ffd700; filter: drop-shadow(0 0 10px #ffd700);"></i>
+                    <h3 style="margin: 10px 0; color: #ffd700;">Telegram Stars</h3>
+                    <p style="font-size: 11px; opacity: 0.7;">سریع‌ترین روش پرداخت (آنی)</p>
+                </div>
+                <input type="number" id="starsInput" placeholder="تعداد استارز (مثلاً 50)">
+                <button class="btn btn-accent" style="background: #ffd700; color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);" onclick="buyStars()">پرداخت با Stars</button>
+            </div>
+            </div>
+
+        <div id="support" class="section">
+            <div class="card tilt-card">
+                <div class="section-title"><i class="fas fa-headset"></i> پشتیبانی</div>
+                <p style="font-size: 13px; color: #ccc;">برای ارسال تیکت به ربات بازگردید.</p>
+                <button class="btn btn-primary" onclick="tg.close()">بازگشت به ربات</button>
             </div>
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home')">
-            <i class="fas fa-home"></i>
-            <span>خانه</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('shop')">
-            <i class="fas fa-shopping-bag"></i>
-            <span>خرید</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('services')">
-            <i class="fas fa-layer-group"></i>
-            <span>سرویس‌ها</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('wallet')">
-            <i class="fas fa-wallet"></i>
-            <span>کیف پول</span>
-        </div>
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('home')"><i class="fas fa-home"></i></div>
+        <div class="nav-item" onclick="switchTab('shop')"><i class="fas fa-shopping-bag"></i></div>
+        <div class="nav-item" onclick="switchTab('services')"><i class="fas fa-layer-group"></i></div>
+        <div class="nav-item" onclick="switchTab('wallet')"><i class="fas fa-wallet"></i></div>
+        <div class="nav-item" onclick="switchTab('support')"><i class="fas fa-life-ring"></i></div>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.setHeaderColor('#050a14');
-        tg.setBackgroundColor('#050a14');
+        const tg = window.Telegram.WebApp; tg.expand();
+        tg.setHeaderColor('#000000'); tg.setBackgroundColor('#000000');
 
-        // URL Params Logic
         const urlParams = new URLSearchParams(window.location.search);
         const userBalance = urlParams.get('bal') || '0';
         const userRegion = urlParams.get('reg') || 'fa';
         const currency = userRegion === 'fa' ? 'تومان' : '$';
+        document.getElementById('balanceDisplay').innerText = `${parseInt(userBalance).toLocaleString()} ${currency}`;
 
-        // Update UI with Data
-        const balEl = document.getElementById('balanceDisplay');
-        balEl.innerText = `${parseInt(userBalance).toLocaleString()} ${currency}`;
-        
-        // Tab Logic
         function switchTab(tabId) {
-            // Hide all sections
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            // Remove active class from navs
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-            // Show target
             document.getElementById(tabId).classList.add('active');
-            
-            // Highlight nav
-            const tabs = ['home', 'shop', 'services', 'wallet'];
-            const index = tabs.indexOf(tabId);
-            if(index !== -1) {
-                document.querySelectorAll('.nav-item')[index].classList.add('active');
-            }
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const tabs = ['home', 'shop', 'services', 'wallet', 'support'];
+            const idx = tabs.indexOf(tabId);
+            if(idx !== -1) document.querySelectorAll('.nav-item')[idx].classList.add('active');
         }
-
-        // Send Data to Bot
         function sendAction(action, payload = null) {
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             tg.sendData(JSON.stringify({ action, payload }));
         }
-
         function buyStars() {
             const val = document.getElementById('starsInput').value;
             if(val && val > 0) sendAction('topup_stars', val);
-            else tg.showPopup({title: 'خطا', message: 'لطفاً مبلغ معتبر وارد کنید'});
+            else tg.showPopup({title: 'خطا', message: 'مبلغ نامعتبر است'});
         }
+
+        // --- PARTICLE ENGINE ---
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const particles = [];
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width; this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 2 + 0.5; this.speedY = Math.random() * 1.5 + 0.5;
+                this.color = Math.random() > 0.5 ? '#ff4d00' : '#ffae00'; this.opacity = Math.random() * 0.8 + 0.2;
+            }
+            update() { this.y -= this.speedY; this.opacity -= 0.005; if(this.y < 0 || this.opacity <= 0) this.reset(); }
+            draw() { ctx.globalAlpha = this.opacity; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
+        }
+        for(let i=0; i<60; i++) particles.push(new Particle());
+        function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
+        animateParticles();
+
+        // --- 3D TILT (Reduced Intensity) ---
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width/2;
+                const y = e.clientY - rect.top - rect.height/2;
+                
+                // مقدار تقسیم بر 100 شده است (قبلاً 10 بود)
+                // این باعث می‌شود حرکت بسیار ریز و نرم باشد
+                card.style.transform = `perspective(1000px) rotateX(${-y/100}deg) rotateY(${x/100}deg)`;
+            });
+            card.addEventListener('mouseleave', () => { card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)'; });
+        });
     </script>
 </body>
 </html>
