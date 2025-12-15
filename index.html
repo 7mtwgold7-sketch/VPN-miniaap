@@ -7,265 +7,145 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #050505;
-            --card-bg: rgba(30, 30, 30, 0.7);
-            --neon-cyan: #00f3ff;
-            --neon-blue: #0066ff;
-            --text-color: #ffffff;
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Tahoma', sans-serif;
-            margin: 0;
-            padding: 15px;
-            padding-bottom: 90px;
-            overflow-x: hidden;
-            user-select: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 0; padding: 0; font-family: 'Tahoma', sans-serif;
+            background-color: #000; color: white; overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        /* پس‌زمینه متحرک */
-        .bg-animation {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.1), transparent 70%);
+        /* پس زمینه متحرک گلادیاتور */
+        .bg-video {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.4; object-fit: cover;
+            background: url('bg.gif') no-repeat center center / cover;
+        }
+        
+        /* افکت تاریک روی پس زمینه */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000);
             z-index: -1;
-            animation: pulseBg 4s infinite alternate;
         }
 
-        @keyframes pulseBg {
-            0% { transform: scale(1); opacity: 0.5; }
-            100% { transform: scale(1.2); opacity: 0.8; }
-        }
-
-        /* هدر و لوگو */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            margin-top: 10px;
-        }
-
-        .logo-wrapper {
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 10px;
-            border-radius: 50%;
-            padding: 3px;
-            background: conic-gradient(from 0deg, var(--neon-cyan), var(--neon-blue), var(--neon-cyan));
-            animation: spinBorder 4s linear infinite;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
-        }
-
-        .logo-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
+        .header { margin-top: 30px; text-align: center; z-index: 10; }
+        
+        .logo-box {
+            width: 100px; height: 100px; margin: 0 auto;
+            border-radius: 50%; border: 3px solid #00f3ff;
+            box-shadow: 0 0 20px #00f3ff; overflow: hidden;
             background: #000;
-            object-fit: contain;
-            /* لوگوی ربات شما */
-            content: url('https://cdn-icons-png.flaticon.com/512/4128/4128266.png'); 
+        }
+        
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .title {
+            margin-top: 10px; font-size: 22px; font-weight: bold;
+            color: #00f3ff; text-shadow: 0 0 10px #00f3ff;
+            text-transform: uppercase; letter-spacing: 2px;
         }
 
-        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
-
-        .app-title {
-            font-size: 18px;
-            font-weight: 900;
-            color: var(--neon-cyan);
-            text-shadow: 0 0 10px var(--neon-cyan);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .balance-container {
+            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 20px; padding: 20px; width: 85%; margin: 20px 0;
+            text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
-
-        /* کارت موجودی */
-        .balance-card {
-            width: 100%;
-            max-width: 350px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        
+        .bal-amount { font-size: 30px; font-weight: bold; margin: 10px 0; }
+        
+        .btn-main {
+            background: #00f3ff; color: #000; border: none; padding: 12px;
+            width: 100%; border-radius: 10px; font-weight: bold; font-size: 16px;
+            cursor: pointer; transition: 0.2s;
         }
+        .btn-main:active { transform: scale(0.95); background: #fff; }
 
-        .balance-label { font-size: 12px; color: #aaa; margin-bottom: 5px; }
-        .balance-value { font-size: 32px; font-weight: bold; color: #fff; margin-bottom: 15px; }
-
-        .btn-topup {
-            background: var(--neon-cyan);
-            color: #000;
-            border: none;
-            padding: 10px 0;
-            width: 100%;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-            transition: 0.2s;
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 85%; }
+        
+        .card {
+            background: rgba(40, 40, 40, 0.7); border-radius: 15px; padding: 15px;
+            text-align: center; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
         }
-        .btn-topup:active { transform: scale(0.97); }
+        .card:active { border-color: #00f3ff; background: rgba(0, 243, 255, 0.1); }
+        .card i { font-size: 24px; color: #00f3ff; margin-bottom: 8px; }
+        .card span { font-size: 13px; display: block; }
 
-        /* گرید دکمه‌ها */
-        .grid-menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%;
-            max-width: 350px;
-        }
-
-        .menu-item {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.2s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 90px;
-        }
-
-        .menu-item:active {
-            background: rgba(0, 243, 255, 0.1);
-            border-color: var(--neon-cyan);
-            transform: scale(0.98);
-        }
-
-        .menu-icon { font-size: 24px; color: var(--neon-cyan); margin-bottom: 8px; filter: drop-shadow(0 0 5px var(--neon-cyan)); }
-        .menu-text { font-size: 13px; color: #fff; }
-
-        /* نوار پایین */
+        /* منوی پایین */
         .bottom-nav {
-            position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 350px;
-            background: rgba(15, 15, 15, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 50px;
-            height: 60px;
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            z-index: 100;
+            position: fixed; bottom: 20px; background: #1a1a1a;
+            width: 90%; border-radius: 50px; height: 60px;
+            display: flex; justify-content: space-around; align-items: center;
+            border: 1px solid #333; box-shadow: 0 5px 20px #000;
         }
-
-        .nav-btn {
-            font-size: 20px;
-            color: #666;
-            padding: 10px;
-            transition: 0.3s;
-            cursor: pointer;
+        .nav-item { color: #888; font-size: 20px; padding: 10px; }
+        .nav-item.active {
+            color: #000; background: #00f3ff; border-radius: 50%;
+            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 10px #00f3ff; margin-top: -15px;
         }
-
-        .nav-btn.active {
-            color: #000;
-            background: var(--neon-cyan);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px var(--neon-cyan);
-            transform: translateY(-5px);
-        }
-
     </style>
 </head>
 <body>
-
-    <div class="bg-animation"></div>
+    <div class="bg-video"></div>
+    <div class="overlay"></div>
 
     <div class="header">
-        <div class="logo-wrapper">
-            <img class="logo-img">
+        <div class="logo-box">
+            <img src="logo.jpg" onerror="this.style.display='none'">
         </div>
-        <div class="app-title">IMMORTAL VPN</div>
+        <div class="title">IMMORTAL VPN</div>
     </div>
 
-    <div class="balance-card">
-        <div class="balance-label">موجودی کیف پول</div>
-        <div class="balance-value" id="balDisplay">...</div>
-        <button class="btn-topup" onclick="sendToBot('topup_menu')">
-            <i class="fas fa-plus-circle"></i> افزایش موجودی
+    <div class="balance-container">
+        <div style="font-size: 12px; color: #aaa;">موجودی کیف پول</div>
+        <div class="bal-amount" id="balance">...</div>
+        <button class="btn-main" onclick="send('topup_menu')">
+            <i class="fas fa-plus"></i> افزایش موجودی
         </button>
     </div>
 
-    <div class="grid-menu">
-        <div class="menu-item" onclick="sendToBot('open_buy_menu')">
-            <div class="menu-icon"><i class="fas fa-shopping-cart"></i></div>
-            <div class="menu-text">خرید اشتراک</div>
+    <div class="grid">
+        <div class="card" onclick="send('open_buy_menu')">
+            <i class="fas fa-shopping-cart"></i>
+            <span>خرید اشتراک</span>
         </div>
-        <div class="menu-item" onclick="sendToBot('open_services')">
-            <div class="menu-icon"><i class="fas fa-server"></i></div>
-            <div class="menu-text">سرویس‌های من</div>
+        <div class="card" onclick="send('open_services')">
+            <i class="fas fa-server"></i>
+            <span>سرویس‌های من</span>
         </div>
-        <div class="menu-item" onclick="sendToBot('support')">
-            <div class="menu-icon"><i class="fas fa-headset"></i></div>
-            <div class="menu-text">پشتیبانی</div>
+        <div class="card" onclick="send('support')">
+            <i class="fas fa-headset"></i>
+            <span>پشتیبانی</span>
         </div>
-        <div class="menu-item" onclick="Telegram.WebApp.close()">
-            <div class="menu-icon"><i class="fas fa-power-off"></i></div>
-            <div class="menu-text">خروج</div>
+        <div class="card" onclick="Telegram.WebApp.close()">
+            <i class="fas fa-power-off"></i>
+            <span>خروج</span>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-btn" onclick="sendToBot('support')"><i class="fas fa-comment"></i></div>
-        <div class="nav-btn" onclick="sendToBot('open_services')"><i class="fas fa-cube"></i></div>
-        <div class="nav-btn" onclick="sendToBot('topup_menu')"><i class="fas fa-wallet"></i></div>
-        <div class="nav-btn active"><i class="fas fa-home"></i></div>
+        <div class="nav-item" onclick="send('support')"><i class="fas fa-comment"></i></div>
+        <div class="nav-item" onclick="send('open_services')"><i class="fas fa-cube"></i></div>
+        <div class="nav-item" onclick="send('topup_menu')"><i class="fas fa-wallet"></i></div>
+        <div class="nav-item active"><i class="fas fa-home"></i></div>
     </div>
 
     <script>
-        // راه‌اندازی تلگرام
         const tg = window.Telegram.WebApp;
-        tg.expand(); // تمام صفحه
-        
-        // تنظیم رنگ هدر برای زیبایی
-        tg.setHeaderColor('#050505');
-        tg.setBackgroundColor('#050505');
+        tg.expand();
 
-        // دریافت پارامترهای موجودی و ریجن از آدرس
-        const urlParams = new URLSearchParams(window.location.search);
-        const bal = urlParams.get('bal') || '0';
-        const reg = urlParams.get('reg') || 'fa';
+        // دریافت موجودی از لینک
+        const params = new URLSearchParams(window.location.search);
+        const bal = params.get('bal') || '0';
+        const reg = params.get('reg') || 'fa';
+        document.getElementById('balance').innerText = parseInt(bal).toLocaleString() + (reg==='fa'?' تومان':' $');
 
-        // نمایش صحیح قیمت
-        const currency = reg === 'fa' ? 'تومان' : '$';
-        document.getElementById('balDisplay').innerText = parseInt(bal).toLocaleString() + ' ' + currency;
-
-        // تابع اصلی ارسال دستور به ربات
-        function sendToBot(action, payload = null) {
-            // ایجاد ویبره کوچک در گوشی
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-
-            const data = JSON.stringify({
-                action: action,
-                payload: payload
-            });
-
-            // ارسال دیتا و بستن پنجره (رفتار استاندارد دکمه‌های ربات)
+        function send(action) {
+            // ویبره زدن
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            
+            // ارسال دستور به ربات
+            const data = JSON.stringify({ action: action, payload: null });
             tg.sendData(data);
         }
     </script>
