@@ -7,146 +7,213 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* استایل کلی */
         body {
             margin: 0; padding: 0; font-family: 'Tahoma', sans-serif;
             background-color: #000; color: white; overflow-x: hidden;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            user-select: none; -webkit-tap-highlight-color: transparent;
+            padding-bottom: 80px; /* جا برای منوی پایین */
         }
 
-        /* پس زمینه متحرک گلادیاتور */
+        /* پس زمینه متحرک */
         .bg-video {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.4; object-fit: cover;
-            background: url('bg.gif') no-repeat center center / cover;
-        }
-        
-        /* افکت تاریک روی پس زمینه */
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000);
-            z-index: -1;
+            z-index: -1; opacity: 0.3; object-fit: cover;
+            /* اگر فایل bg.gif ندارید، یک پس زمینه پیش فرض می گذارد */
+            background: url('bg.gif') no-repeat center center / cover, #050505;
         }
 
-        .header { margin-top: 30px; text-align: center; z-index: 10; }
-        
+        .container { padding: 20px; text-align: center; }
+
+        /* صفحات (Tab Content) */
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* لوگو */
         .logo-box {
-            width: 100px; height: 100px; margin: 0 auto;
+            width: 110px; height: 110px; margin: 30px auto 10px;
             border-radius: 50%; border: 3px solid #00f3ff;
-            box-shadow: 0 0 20px #00f3ff; overflow: hidden;
-            background: #000;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
+            overflow: hidden; background: #000;
         }
-        
         .logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .title {
-            margin-top: 10px; font-size: 22px; font-weight: bold;
-            color: #00f3ff; text-shadow: 0 0 10px #00f3ff;
-            text-transform: uppercase; letter-spacing: 2px;
+
+        .app-title {
+            font-size: 20px; font-weight: bold; color: #00f3ff;
+            text-shadow: 0 0 10px #00f3ff; letter-spacing: 2px;
+            margin-bottom: 20px;
         }
 
-        .balance-container {
-            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 20px; padding: 20px; width: 85%; margin: 20px 0;
-            text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        
-        .bal-amount { font-size: 30px; font-weight: bold; margin: 10px 0; }
-        
-        .btn-main {
-            background: #00f3ff; color: #000; border: none; padding: 12px;
-            width: 100%; border-radius: 10px; font-weight: bold; font-size: 16px;
-            cursor: pointer; transition: 0.2s;
-        }
-        .btn-main:active { transform: scale(0.95); background: #fff; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 85%; }
-        
+        /* کارت‌ها */
         .card {
-            background: rgba(40, 40, 40, 0.7); border-radius: 15px; padding: 15px;
-            text-align: center; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+            background: rgba(30, 30, 30, 0.8); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px; padding: 15px; margin-bottom: 15px;
+            backdrop-filter: blur(10px);
         }
-        .card:active { border-color: #00f3ff; background: rgba(0, 243, 255, 0.1); }
-        .card i { font-size: 24px; color: #00f3ff; margin-bottom: 8px; }
-        .card span { font-size: 13px; display: block; }
+
+        .balance-amount { font-size: 32px; font-weight: bold; color: #fff; margin: 10px 0; }
+        .balance-label { font-size: 12px; color: #aaa; }
+
+        /* دکمه‌ها */
+        .btn {
+            background: linear-gradient(90deg, #00f3ff, #0066ff);
+            color: #000; border: none; padding: 12px; width: 100%;
+            border-radius: 10px; font-weight: bold; font-size: 16px;
+            cursor: pointer; margin-top: 10px;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+        .btn:active { transform: scale(0.96); opacity: 0.9; }
+
+        .btn-outline {
+            background: transparent; border: 1px solid #00f3ff; color: #00f3ff;
+        }
 
         /* منوی پایین */
         .bottom-nav {
-            position: fixed; bottom: 20px; background: #1a1a1a;
-            width: 90%; border-radius: 50px; height: 60px;
-            display: flex; justify-content: space-around; align-items: center;
-            border: 1px solid #333; box-shadow: 0 5px 20px #000;
+            position: fixed; bottom: 15px; left: 5%; width: 90%;
+            background: rgba(10, 10, 10, 0.95); border-radius: 50px;
+            height: 65px; display: flex; justify-content: space-around;
+            align-items: center; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 5px 20px #000; z-index: 100;
         }
-        .nav-item { color: #888; font-size: 20px; padding: 10px; }
+
+        .nav-item {
+            color: #777; font-size: 24px; padding: 10px; transition: 0.3s;
+        }
+        
         .nav-item.active {
             color: #000; background: #00f3ff; border-radius: 50%;
-            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 10px #00f3ff; margin-top: -15px;
+            width: 45px; height: 45px; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 0 15px #00f3ff;
+            transform: translateY(-15px);
         }
+
+        /* استایل لیست دکمه‌ها */
+        .action-list { display: grid; gap: 10px; }
+        .action-btn {
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;
+            display: flex; align-items: center; gap: 15px; color: white;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .action-btn i { color: #00f3ff; font-size: 20px; }
     </style>
 </head>
 <body>
+
     <div class="bg-video"></div>
-    <div class="overlay"></div>
 
-    <div class="header">
-        <div class="logo-box">
-            <img src="logo.jpg" onerror="this.style.display='none'">
+    <div id="home" class="page active">
+        <div class="container">
+            <div class="logo-box">
+                <img src="logo.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3662/3662817.png'">
+            </div>
+            <div class="app-title">IMMORTAL VPN</div>
+
+            <div class="card">
+                <div class="balance-label">موجودی حساب</div>
+                <div class="balance-amount" id="balDisplay">...</div>
+                <button class="btn" onclick="openPage('wallet')">افزایش موجودی</button>
+            </div>
+
+            <div class="action-list">
+                <div class="action-btn" onclick="sendToBot('open_buy_menu')">
+                    <i class="fas fa-shopping-cart"></i> <span>خرید اشتراک جدید</span>
+                </div>
+                <div class="action-btn" onclick="sendToBot('open_services')">
+                    <i class="fas fa-server"></i> <span>مدیریت سرویس‌ها</span>
+                </div>
+            </div>
         </div>
-        <div class="title">IMMORTAL VPN</div>
     </div>
 
-    <div class="balance-container">
-        <div style="font-size: 12px; color: #aaa;">موجودی کیف پول</div>
-        <div class="bal-amount" id="balance">...</div>
-        <button class="btn-main" onclick="send('topup_menu')">
-            <i class="fas fa-plus"></i> افزایش موجودی
-        </button>
+    <div id="services" class="page">
+        <div class="container">
+            <h2 style="color: #00f3ff;">سرویس‌های من</h2>
+            <div class="card">
+                <p style="font-size: 13px; color: #ccc;">برای مدیریت سرویس‌ها دکمه زیر را بزنید تا ربات لیست را ارسال کند.</p>
+                <button class="btn" onclick="sendToBot('open_services')">دریافت لیست سرویس‌ها</button>
+            </div>
+        </div>
     </div>
 
-    <div class="grid">
-        <div class="card" onclick="send('open_buy_menu')">
-            <i class="fas fa-shopping-cart"></i>
-            <span>خرید اشتراک</span>
+    <div id="wallet" class="page">
+        <div class="container">
+            <h2 style="color: #00f3ff;">افزایش موجودی</h2>
+            <div class="card">
+                <i class="fas fa-wallet" style="font-size: 40px; color: #00f3ff; margin-bottom: 10px;"></i>
+                <p>روش پرداخت را انتخاب کنید:</p>
+                <button class="btn" onclick="sendToBot('topup_menu')">پرداخت ارزی / ریالی</button>
+                <button class="btn btn-outline" onclick="sendToBot('topup_stars_menu')">پرداخت با استارز (Stars)</button>
+            </div>
         </div>
-        <div class="card" onclick="send('open_services')">
-            <i class="fas fa-server"></i>
-            <span>سرویس‌های من</span>
-        </div>
-        <div class="card" onclick="send('support')">
-            <i class="fas fa-headset"></i>
-            <span>پشتیبانی</span>
-        </div>
-        <div class="card" onclick="Telegram.WebApp.close()">
-            <i class="fas fa-power-off"></i>
-            <span>خروج</span>
+    </div>
+
+    <div id="support" class="page">
+        <div class="container">
+            <h2 style="color: #00f3ff;">پشتیبانی</h2>
+            <div class="card">
+                <p>برای ارتباط با ادمین دکمه زیر را بزنید.</p>
+                <button class="btn" onclick="sendToBot('support')">ارسال تیکت</button>
+            </div>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item" onclick="send('support')"><i class="fas fa-comment"></i></div>
-        <div class="nav-item" onclick="send('open_services')"><i class="fas fa-cube"></i></div>
-        <div class="nav-item" onclick="send('topup_menu')"><i class="fas fa-wallet"></i></div>
-        <div class="nav-item active"><i class="fas fa-home"></i></div>
+        <div class="nav-item" onclick="openPage('support')"><i class="fas fa-headset"></i></div>
+        <div class="nav-item" onclick="openPage('services')"><i class="fas fa-cube"></i></div>
+        <div class="nav-item" onclick="openPage('wallet')"><i class="fas fa-wallet"></i></div>
+        <div class="nav-item active" onclick="openPage('home')"><i class="fas fa-home"></i></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.setHeaderColor('#000000');
 
-        // دریافت موجودی از لینک
-        const params = new URLSearchParams(window.location.search);
-        const bal = params.get('bal') || '0';
-        const reg = params.get('reg') || 'fa';
-        document.getElementById('balance').innerText = parseInt(bal).toLocaleString() + (reg==='fa'?' تومان':' $');
+        // مدیریت تب‌ها (جابجایی بین صفحات)
+        function openPage(pageId) {
+            // مخفی کردن همه صفحات
+            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+            // نمایش صفحه انتخاب شده
+            document.getElementById(pageId).classList.add('active');
 
-        function send(action) {
-            // ویبره زدن
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            // آپدیت کردن آیکون‌های پایین
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
-            // ارسال دستور به ربات
-            const data = JSON.stringify({ action: action, payload: null });
+            // پیدا کردن دکمه مربوطه و فعال کردن آن
+            const navIndex = ['support', 'services', 'wallet', 'home'].indexOf(pageId);
+            if(navIndex !== -1) {
+                document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
+            }
+        }
+
+        // دریافت اطلاعات از URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bal = urlParams.get('bal') || '0';
+        const reg = urlParams.get('reg') || 'fa';
+        const currency = reg === 'fa' ? 'تومان' : '$';
+        document.getElementById('balDisplay').innerText = parseInt(bal).toLocaleString() + ' ' + currency;
+
+        // تابع ارسال به ربات (سیم‌کشی)
+        function sendToBot(action) {
+            // ویبره
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
+            const data = JSON.stringify({
+                action: action,
+                payload: null
+            });
+
+            // 1. ارسال دیتا به ربات
             tg.sendData(data);
+            
+            // 2. بستن مینی اپ (مهم! چون ربات جواب را در چت می‌دهد)
+            // کمی تاخیر می‌دهیم تا مطمئن شویم دیتا ارسال شده
+            setTimeout(() => {
+                tg.close();
+            }, 100);
         }
     </script>
 </body>
