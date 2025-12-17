@@ -183,13 +183,17 @@
         const tg = window.Telegram.WebApp;
         tg.expand(); 
         tg.setHeaderColor('#000000');
+        try { updateNetworks(); } catch(e) {}
 
         // دریافت اطلاعات از URL (اینجا لیست پلن‌ها از ربات میاد)
         const params = new URLSearchParams(window.location.search);
         const bal = parseInt(params.get('bal') || 0).toLocaleString();
         const plansRaw = params.get('plans') || ""; 
         
-        document.getElementById('balDisplay').innerText = bal + " تومان";
+        
+        const reg = params.get('reg') || 'fa';
+        const currencyLabel = (reg === 'fa') ? 'تومان' : (reg === 'tr') ? 'TL' : (reg === 'ae') ? 'AED' : (reg === 'ru') ? '₽' : (reg === 'cn') ? '¥' : '$';
+        document.getElementById('balDisplay').innerText = bal + " " + currencyLabel;
 
         // ساخت لیست پلن‌ها
         const container = document.getElementById('plans-container');
@@ -247,9 +251,11 @@
 
         // ارسال به ربات
         function send(action, payload=null) {
-            tg.HapticFeedback.impactOccurred('medium');
+            try { tg.HapticFeedback.impactOccurred('medium'); } catch(e) {}
             const data = JSON.stringify({ action, payload });
-            tg.sendData(data);
+            try { tg.sendData(data); } catch(e) { console.error(e); alert('ارسال به ربات ناموفق بود.'); return; }
+            // به کاربر بگو نتیجه داخل چت میاد (بدون تغییر UI)
+            try { tg.showToast({ text: 'درخواست ارسال شد؛ نتیجه داخل چت ربات نمایش داده می‌شود.' }); } catch(e) {}
         }
 
         // لاجیک‌های دکمه‌ها
